@@ -44,10 +44,10 @@ app.use(
     secret: "Laundry is for UX-Designers",
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 60000 },
+    cookie: { maxAge: 60*1000 },
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
-      ttl: 24 * 60 * 60 // 1 day
+      ttl: 1*60
     })
   })
 );

@@ -14,12 +14,13 @@ router.get("/signup", (req, res, next) => {
 
 router.post("/signup", (req, res, next) => {
   const nameInput = req.body.name;
+  const usernameInput = req.body.username;
   const emailInput = req.body.email;
   const passwordInput = req.body.password;
 
-  if (emailInput === "" || passwordInput === "") {
+  if (emailInput === "" || passwordInput === "" || usernameInput === "") {
     res.render("auth/signup", {
-      errorMessage: "Enter both email and password to sign up."
+      errorMessage: "Please fill all fields."
     });
     return;
   }
@@ -36,12 +37,25 @@ router.post("/signup", (req, res, next) => {
       });
       return;
     }
-
+    User.findOne({ username: usernameInput }, "_id", (err, existingUser) => {
+        if (err) {
+          next(err);
+          return;
+        }
+    
+        if (existingUser !== null) {
+          res.render("auth/signup", {
+            errorMessage: `The username ${usernameInput} is already in use.`
+          });
+          return;
+        }
+    });
     const salt = bcrypt.genSaltSync(bcryptSalt);
     const hashedPass = bcrypt.hashSync(passwordInput, salt);
 
     const userSubmission = {
       name: nameInput,
+      username: usernameInput,
       email: emailInput,
       password: hashedPass
     };
@@ -68,27 +82,27 @@ router.get("/login", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
-  const emailInput = req.body.email;
+  const credentials = req.body.credentials;
   const passwordInput = req.body.password;
 
-  if (emailInput === "" || passwordInput === "") {
+  if (credentials === "" || passwordInput === "") {
     res.render("auth/login", {
-      errorMessage: "Enter both email and password to log in."
+      errorMessage: "Enter email/username and password to log in."
     });
     return;
   }
 
-  User.findOne({ email: emailInput }, (err, theUser) => {
+  User.findOne({$or: [{email: credentials},{username: credentials}]}, (err, theUser) => {
     if (err || theUser === null) {
       res.render("auth/login", {
-        errorMessage: `There isn't an account with email ${emailInput}.`
+        errorMessage: `Invalid Email/Username or Password.`
       });
       return;
     }
 
     if (!bcrypt.compareSync(passwordInput, theUser.password)) {
       res.render("auth/login", {
-        errorMessage: "Invalid password."
+        errorMessage: "Invalid Email/Username or Password."
       });
       return;
     }

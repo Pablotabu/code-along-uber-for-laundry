@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   name: String,
+  username: String,
   email: String,
   password: String,
   isLaunderer: { type: Boolean, default: false },
