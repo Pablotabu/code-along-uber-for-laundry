@@ -1,11 +1,46 @@
 <h2> Your laundry Dashboard </h2>
 
 <ul>
+  <li> <a href="/"> Go Back! </a> </li>
   <li> <a href="/launderers"> Find a Launderer </a> </li>
   <li> <a href="/logout"> Log Out </a> </li>
 </ul>
 
+{{#if currentUserInfo.isLaunderer}}
+<h3> You are a launderer! </h3>
 
+<p>
+  Your laundering fee is
+  <b>${{ currentUserInfo.fee }}.</b>
+</p>
+<h3> Update your fee! </h3>
+
+<form action="/launderers" method="post">
+  <div>
+    <label for="fee-input"> Set your fee </label>
+    <input type="number" name="fee" id="fee-input">
+  </div>
+  <button> Update! </button>
+</form>
+<form action="/remove" method="post">
+  <button> Remove your services! </button>
+</form>
+
+<h3> Pending Pickups </h3>
+
+<ul>
+  {{#each pickups}}
+  <li>
+    <h4> {{ this.pickupDate }} </h4>
+
+    <ul>
+      <li> <b>Client</b>: {{ this.user.name }} </li>
+    </ul>
+  </li>
+  {{/each}}
+</ul>
+
+{{else}}
 <h3> Want to become a launderer? </h3>
 
 <form action="/launderers" method="post">
@@ -13,6 +48,20 @@
     <label for="fee-input"> Set your fee </label>
     <input type="number" name="fee" id="fee-input">
   </div>
-
   <button> Become a Launderer </button>
 </form>
+
+<h3> Ordered Pickups </h3>
+
+<ul>
+  {{#each pickups}}
+  <li>
+    <h4> {{ this.pickupDate }} </h4>
+
+    <ul>
+      <li> <b>Launderer</b>: {{ this.launderer.name }} </li>
+    </ul>
+  </li>
+  {{/each}}
+</ul>
+{{/if}}

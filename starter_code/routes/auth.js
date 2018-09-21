@@ -18,7 +18,7 @@ router.post("/signup", (req, res, next) => {
   const emailInput = req.body.email;
   const passwordInput = req.body.password;
 
-  if (emailInput === "" || passwordInput === "" || usernameInput === "") {
+  if (emailInput === "" || passwordInput === "" || usernameInput === "" || nameInput=== "") {
     res.render("auth/signup", {
       errorMessage: "Please fill all fields."
     });

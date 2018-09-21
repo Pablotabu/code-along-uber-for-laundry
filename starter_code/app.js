@@ -44,10 +44,10 @@ app.use(
     secret: "Laundry is for UX-Designers",
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 60*1000 },
+    cookie: { maxAge: 24 * 60 * 1000 },
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
-      ttl: 1*60
+      ttl: 24 * 60 * 60
     })
   })
 );
@@ -79,11 +79,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
 // default value for title local
-app.locals.title = "Express - Generated with IronGenerator";
+app.locals.title = "Uber for Laundry";
 
 const index = require("./routes/index");
-const authRoutes = require("./routes/auth");
 app.use("/", index);
+const authRoutes = require("./routes/auth");
 app.use("/", authRoutes);
+const laundryRoutes = require("./routes/laundry");
+app.use("/", laundryRoutes);
 
 module.exports = app;
